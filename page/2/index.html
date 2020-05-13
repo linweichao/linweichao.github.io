@@ -112,7 +112,7 @@
           <section id="posts" class="posts">
     <article class="post">
   <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/%E5%85%B3%E4%BA%8Emybatis-spring-boot-%E5%A4%96%E9%83%A8%E5%B1%9E%E6%80%A7%E7%9A%84%E9%85%8D%E7%BD%AE/">关于mybatis Spring Boot 外部属性的配置</a></h1>
+    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/%E5%88%86%E9%A1%B5%E4%BB%A3%E7%A0%81%E9%80%BB%E8%BE%91js/">分页代码逻辑(js)</a></h1>
     <div class="post-meta">
       <span class="post-time"> 2020-05-03 </span>
       <div class="post-category">
@@ -123,17 +123,17 @@
   
   <div class="post-content">
     <div class="post-summary">
-      1 2 3 4 mybatis:configuration-properties:#这里必须是string,如果不是string就是nullflus
+      1 2 3 4 5 6 7 8 9 10 11 12 13 var count = 4; var start = page.pageNum - parseInt(count / 2); var end = page.pageNum + Math.ceil(count / 2) - 1; if (page.pages &lt;= count ) { start = 1; end = page.pages; } else if(start &lt; 1) { start = 1; end = count; } else if (end &gt; page.pages) { start = page.pages -
     </div>
     <div class="read-more">
-      <a href="/post/%E7%AC%94%E8%AE%B0/%E5%85%B3%E4%BA%8Emybatis-spring-boot-%E5%A4%96%E9%83%A8%E5%B1%9E%E6%80%A7%E7%9A%84%E9%85%8D%E7%BD%AE/" class="read-more-link">阅读更多</a>
+      <a href="/post/%E7%AC%94%E8%AE%B0/%E5%88%86%E9%A1%B5%E4%BB%A3%E7%A0%81%E9%80%BB%E8%BE%91js/" class="read-more-link">阅读更多</a>
     </div>
   </div>
 </article>
 
     <article class="post">
   <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/%E5%85%B3%E4%BA%8Espring-boot-yml%E9%85%8D%E7%BD%AE%E5%92%8Cproperties%E9%85%8D%E7%BD%AE%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/">关于spring Boot Yml配置和properties配置覆盖问题</a></h1>
+    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/jenkins%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95%E5%A4%B1%E8%B4%A5/">Jenkins运行测试失败</a></h1>
     <div class="post-meta">
       <span class="post-time"> 2020-05-03 </span>
       <div class="post-category">
@@ -144,17 +144,17 @@
   
   <div class="post-content">
     <div class="post-summary">
-      application.yml 配置如下 1 2 3 4 5 spring:kafka:bootstrap-servers:- 10.1.1.2:9092- 10.1.1.3:9092 在测试时提供如下配置： 1 spring.kafka.bootstrap-servers=localhost:9092 或者设置系统属性 1 2 3 4 @BeforeClass public static void beforeClass() { System.setProperty(&#34;spring.kafka.bootstrap-servers&#34;, embeddedKafka.getBrokersAsString()); } 后两个配置不会覆盖第一个配置！！！ spring boot 官方文档
+      jenkins 会以如下的方式运行mvn： 1 mvn -f ../bomc-resource-api/pom.xml clean package 这样运行会导致测试中的 Classloader.getResource(&quot;&quot;) 返回null jpa 的 persistenceUnitRootLocation 默认为 &ldquo;classpath:&rdquo; , 会产生一个Classloader.getReso
     </div>
     <div class="read-more">
-      <a href="/post/%E7%AC%94%E8%AE%B0/%E5%85%B3%E4%BA%8Espring-boot-yml%E9%85%8D%E7%BD%AE%E5%92%8Cproperties%E9%85%8D%E7%BD%AE%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/" class="read-more-link">阅读更多</a>
+      <a href="/post/%E7%AC%94%E8%AE%B0/jenkins%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95%E5%A4%B1%E8%B4%A5/" class="read-more-link">阅读更多</a>
     </div>
   </div>
 </article>
 
     <article class="post">
   <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/spring-boot-%E6%97%A5%E5%BF%97%E5%88%9D%E5%A7%8B%E5%8C%96/">Spring Boot 日志初始化</a></h1>
+    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/maven%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AF%BC%E8%87%B4classloader.getresource%E8%BF%94%E5%9B%9E%E7%A9%BA/">Maven运行命令导致Classloader.getResource返回空</a></h1>
     <div class="post-meta">
       <span class="post-time"> 2020-05-03 </span>
       <div class="post-category">
@@ -165,17 +165,17 @@
   
   <div class="post-content">
     <div class="post-summary">
-      spring boot官方参考文档有以下一段话 When possible, we recommend that you use the -spring variants for your logging configuration (for example, logback-spring.xml rather than logback.xml). If you use standard configuration locations, Spring cannot completely control log initialization. 为什么使用标准的日志配置文件名，sprin
+      mvn -f ../bomc-resource-api/pom.xml test 会导致执行测试的时候 Classloader.getResource(&quot;&quot;) 返回null
     </div>
     <div class="read-more">
-      <a href="/post/%E7%AC%94%E8%AE%B0/spring-boot-%E6%97%A5%E5%BF%97%E5%88%9D%E5%A7%8B%E5%8C%96/" class="read-more-link">阅读更多</a>
+      <a href="/post/%E7%AC%94%E8%AE%B0/maven%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AF%BC%E8%87%B4classloader.getresource%E8%BF%94%E5%9B%9E%E7%A9%BA/" class="read-more-link">阅读更多</a>
     </div>
   </div>
 </article>
 
     <article class="post">
   <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/idea-integrate-directory-%E5%92%8C-merge-from-%E5%8C%BA%E5%88%AB/">Idea Integrate Directory 和 Merge From 区别</a></h1>
+    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/java%E7%B1%BB%E8%B7%AF%E5%BE%84%E6%9F%A5%E6%89%BE%E9%A1%BA%E5%BA%8F/">java类路径查找顺序</a></h1>
     <div class="post-meta">
       <span class="post-time"> 2020-05-03 </span>
       <div class="post-category">
@@ -186,31 +186,10 @@
   
   <div class="post-content">
     <div class="post-summary">
-      官方文档 merge from: https://www.jetbrains.com/help/idea/integrating-changes-to-from-feature-branches.html integrate directory: https://www.jetbrains.com/help/idea/integrating-svn-projects-or-directories.html 区别应该和 TortoiseSVN -&gt; merge 两个选项之间的区别一样 merge a range of revisions This method covers the case when you have made one or more revisions to a branch (or to the trunk) and you want to port those changes across to a different branch. merge two difference trees
+      URLClassLoader 是 AppClassLoader的父类。 URLClassLoader.getResourceAsStream 按 java.class.path 值的顺序查找类路径的资源，找到即返回
     </div>
     <div class="read-more">
-      <a href="/post/%E7%AC%94%E8%AE%B0/idea-integrate-directory-%E5%92%8C-merge-from-%E5%8C%BA%E5%88%AB/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
-
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E7%AC%94%E8%AE%B0/spring-boot%E5%86%85%E5%B5%8Cservlet%E5%AE%B9%E5%99%A8%E7%9A%84%E6%A0%B9%E7%9B%AE%E5%BD%95document-root/">Spring Boot内嵌Servlet容器的根目录（document Root）</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2020-05-03 </span>
-      <div class="post-category">
-          <a href="/categories/%E7%AC%94%E8%AE%B0/"> 笔记 </a>
-          </div>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      1 AbstractConfigurableEmbeddedServletContainer.getValidDocumentRoot 不是war部署的话，会遍历 &ldquo;src/main/webapp&rdquo;, &ldquo;public&rdquo;, &ldquo;static&rdquo;，有存在的目录即选中
-    </div>
-    <div class="read-more">
-      <a href="/post/%E7%AC%94%E8%AE%B0/spring-boot%E5%86%85%E5%B5%8Cservlet%E5%AE%B9%E5%99%A8%E7%9A%84%E6%A0%B9%E7%9B%AE%E5%BD%95document-root/" class="read-more-link">阅读更多</a>
+      <a href="/post/%E7%AC%94%E8%AE%B0/java%E7%B1%BB%E8%B7%AF%E5%BE%84%E6%9F%A5%E6%89%BE%E9%A1%BA%E5%BA%8F/" class="read-more-link">阅读更多</a>
     </div>
   </div>
 </article>
@@ -218,11 +197,11 @@
     </section>
   
   <nav class="pagination">
-    
-    <a class="next" href="/page/2/">
-        <span class="next-text">下一页</span>
-        <i class="iconfont icon-right"></i>
+    <a class="prev" href="/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text">上一页</span>
       </a>
+    
   </nav>
         </div>
         

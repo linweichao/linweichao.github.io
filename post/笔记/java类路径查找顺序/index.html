@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>分类 - 林伟超</title>
+  <title>java类路径查找顺序 - 林伟超</title>
   <meta name="renderer" content="webkit" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-<meta name="author" content="linweichao" /><meta name="description" content="个人博客" /><meta name="keywords" content="个人, 技术, 博客" />
+<meta name="author" content="linweichao" /><meta name="description" content="URLClassLoader 是 AppClassLoader的父类。 URLClassLoader.getResourceAsStream 按 java.class.path 值的顺序查找类路径的资源，找到即返回" /><meta name="keywords" content="个人, 技术, 博客" />
 
 
 
@@ -26,9 +26,7 @@
 <meta name="generator" content="Hugo 0.69.0 with theme even" />
 
 
-<link rel="canonical" href="http://example.org/categories/" />
-  <link href="http://example.org/categories/index.xml" rel="alternate" type="application/rss+xml" title="林伟超" />
-  <link href="http://example.org/categories/index.xml" rel="feed" type="application/rss+xml" title="林伟超" />
+<link rel="canonical" href="http://example.org/post/%E7%AC%94%E8%AE%B0/java%E7%B1%BB%E8%B7%AF%E5%BE%84%E6%9F%A5%E6%89%BE%E9%A1%BA%E5%BA%8F/" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -41,15 +39,23 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
 
 
-<meta property="og:title" content="Categories" />
-<meta property="og:description" content="个人博客" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://example.org/categories/" />
-<meta property="og:updated_time" content="2020-05-03T17:38:12+08:00" />
-<meta itemprop="name" content="Categories">
-<meta itemprop="description" content="个人博客"><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Categories"/>
-<meta name="twitter:description" content="个人博客"/>
+<meta property="og:title" content="java类路径查找顺序" />
+<meta property="og:description" content="URLClassLoader 是 AppClassLoader的父类。 URLClassLoader.getResourceAsStream 按 java.class.path 值的顺序查找类路径的资源，找到即返回" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/%E7%AC%94%E8%AE%B0/java%E7%B1%BB%E8%B7%AF%E5%BE%84%E6%9F%A5%E6%89%BE%E9%A1%BA%E5%BA%8F/" />
+<meta property="article:published_time" content="2020-05-03T17:07:20+08:00" />
+<meta property="article:modified_time" content="2020-05-03T17:07:20+08:00" />
+<meta itemprop="name" content="java类路径查找顺序">
+<meta itemprop="description" content="URLClassLoader 是 AppClassLoader的父类。 URLClassLoader.getResourceAsStream 按 java.class.path 值的顺序查找类路径的资源，找到即返回">
+<meta itemprop="datePublished" content="2020-05-03T17:07:20&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-03T17:07:20&#43;08:00" />
+<meta itemprop="wordCount" content="41">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="java类路径查找顺序"/>
+<meta name="twitter:description" content="URLClassLoader 是 AppClassLoader的父类。 URLClassLoader.getResourceAsStream 按 java.class.path 值的顺序查找类路径的资源，找到即返回"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -109,19 +115,65 @@
     <main id="main" class="main">
       <div class="content-wrapper">
         <div id="content" class="content">
-          <div class="terms">
-      <div class="terms-title">
-        共计 1 个分类
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">java类路径查找顺序</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-05-03 </span>
+        <div class="post-category">
+            <a href="/categories/%E7%AC%94%E8%AE%B0/"> 笔记 </a>
+            </div>
+        
       </div>
-      <div class="terms-tags">
-        <a class="terms-link" href="/categories/%E7%AC%94%E8%AE%B0/">
-            笔记
-            <span class="terms-count">9</span>
-          </a>
-        </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents"></nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>URLClassLoader 是 AppClassLoader的父类。
+URLClassLoader.getResourceAsStream 按 java.class.path 值的顺序查找类路径的资源，找到即返回</p>
+
     </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">linweichao</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-05-03
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E7%AC%94%E8%AE%B0/maven%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AF%BC%E8%87%B4classloader.getresource%E8%BF%94%E5%9B%9E%E7%A9%BA/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Maven运行命令导致Classloader.getResource返回空</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        
+      </nav>
+    </footer>
+  </article>
         </div>
         
+
+  
+
+  
 
       </div>
     </main>
