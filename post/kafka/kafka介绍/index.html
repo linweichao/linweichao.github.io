@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Kafka介绍 - 林伟超</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="linweichao" /><meta name="description" content="内容来源于官方文档 Apache kafka® 是一个分布式流平台。 这是什么意思呢？ 一个流平台有三个关键的功能： 发布和订阅记录流（streams of recor" /><meta name="keywords" content="个人, 技术, 博客" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.0 with theme even" />
+
+
+<link rel="canonical" href="http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Kafka介绍" />
+<meta property="og:description" content="内容来源于官方文档 Apache kafka® 是一个分布式流平台。 这是什么意思呢？ 一个流平台有三个关键的功能： 发布和订阅记录流（streams of recor" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/" />
+<meta property="article:published_time" content="2020-05-13T21:07:22+08:00" />
+<meta property="article:modified_time" content="2020-05-13T21:07:22+08:00" />
+<meta itemprop="name" content="Kafka介绍">
+<meta itemprop="description" content="内容来源于官方文档 Apache kafka® 是一个分布式流平台。 这是什么意思呢？ 一个流平台有三个关键的功能： 发布和订阅记录流（streams of recor">
+<meta itemprop="datePublished" content="2020-05-13T21:07:22&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-13T21:07:22&#43;08:00" />
+<meta itemprop="wordCount" content="4816">
+
+
+
+<meta itemprop="keywords" content="翻译," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Kafka介绍"/>
+<meta name="twitter:description" content="内容来源于官方文档 Apache kafka® 是一个分布式流平台。 这是什么意思呢？ 一个流平台有三个关键的功能： 发布和订阅记录流（streams of recor"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">林伟超</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">所有文章</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">目录</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">林伟超</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">所有文章</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">目录</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Kafka介绍</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-05-13 </span>
+        <div class="post-category">
+            <a href="/categories/kafka/"> kafka </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#apache-kafka-是一个分布式流平台-这是什么意思呢">Apache kafka® 是一个分布式流平台。 这是什么意思呢？</a></li>
+        <li><a href="#topics-和-logs">Topics 和 Logs</a></li>
+        <li><a href="#分布distribution">分布（Distribution）</a></li>
+        <li><a href="#地域复制geo-replication">地域复制(Geo-Replication)</a></li>
+        <li><a href="#生产者">生产者</a></li>
+        <li><a href="#消费者">消费者</a></li>
+        <li><a href="#多租户">多租户</a></li>
+        <li><a href="#保证">保证</a></li>
+        <li><a href="#kafka作为消息系统">Kafka作为消息系统</a></li>
+        <li><a href="#kafka作为存储系统">Kafka作为存储系统</a></li>
+        <li><a href="#用于流处理的kafka">用于流处理的Kafka</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p><strong>内容来源于<a href="http://kafka.apache.org/intro">官方文档</a></strong></p>
+<h3 id="apache-kafka-是一个分布式流平台-这是什么意思呢">Apache kafka® 是一个分布式流平台。 这是什么意思呢？</h3>
+<p>一个流平台有三个关键的功能：</p>
+<ul>
+<li>发布和订阅记录流（streams of records），类似一个消息队列或企业级消息系统。</li>
+<li>以容错的持久化方式存储记录流</li>
+<li>在记录流出现时处理它们</li>
+</ul>
+<p>Kafka通常用于两种广泛类型的应用程序：</p>
+<ul>
+<li>构建实时的数据流管道，可靠地在系统或程序之间获取数据</li>
+<li>构建实时的流程序，转换或响应记录流</li>
+</ul>
+<p>为了理解Kafka如何做这些事，让我们自底向上地深入探索Kafka的功能。</p>
+<p>首先是一些概念：</p>
+<ul>
+<li>Kafka在一个或多个服务器上运行为一个集群，可以跨多个数据中心</li>
+<li>Kafka集群在叫做topic的分类中存储记录流</li>
+<li>每个记录包含一个键，一个值和一个时间戳</li>
+</ul>
+<p>Kafka有5个核心的API：</p>
+<ul>
+<li>Producer API 允许程序发布记录流到一个或多个Kafka topic。</li>
+<li>Consumer API允许程序订阅一个或多个topic，处理生产到其中的记录流</li>
+<li>Streams API允许程序作为流处理器(stream processor)，高效地从一个或多个topic中消费一个输入流，然后生产一个输出流到一个或多个输出topic。</li>
+<li>Connector API允许构建和运行可重用的生产者或消费者，连接kafka topic到以存在的程序或系统。例如，一个关系型数据库的connector可以捕获每个改变到表中。</li>
+<li>Admin API允许管理和检查topic，broker和其它Kafka对象。</li>
+</ul>
+<p><img src="/kafka/intro/kafka-apis.png" alt="Kafka API"></p>
+<p>在Kafka中客户端和服务器的通讯通过一个简单、高性能的语言无关的TCP协议完成。这个协议是版本化的，维护与老版本的向后兼容性。我们提供了一个Kafka的Java客户端，但是客户端在许多语言中都是可用的。</p>
+<h3 id="topics-和-logs">Topics 和 Logs</h3>
+<p>让我们首先深入Kafka为记录流提供的核心抽象- topic。</p>
+<p>一个topic是一个分类或feed（怎么翻译？）名字，记录会发布到其中。Kafka中的topic总是多订阅者模式的。即，一个topic可以有0个，一个，或许多个订阅写到其中数据的消费者。</p>
+<p>对每个topic，kafka集群维护一个分区的log，像这个：</p>
+<p><img src="/kafka/intro/log_anatomy.png" alt="log anatomy"></p>
+<p>每个分区都是一个有序的，不可变的记录序列，不断地追加到一个结构化的commit log。分区中的记录都会分配一个连续的id数字，叫做offset，唯一标识了在分区中的记录。</p>
+<p>Kafka集群持久保存所有发布的记录，不管是否被消费，使用一个可配置的保留期限。例如，如果保留策略设置为2天，那么一个记录发布后的两天，它可用于消费，之后就会被丢弃以释放空间。Kafka的性能在大小方面是不变的，所以长时间存储数据不是问题。</p>
+<p><img src="/kafka/intro/log_consumer.png" alt="log consumer"></p>
+<p>实际上，在每个消费者上保留的元数据是该消费者在log中的偏移（offset）或位置。偏移由消费者控制：正常一个消费者会线性地增加它的偏移，但是，事实上，由于位置由消费者控制，它可以用任何喜欢的顺序消费记录。例如，一个消费者可以重置到一个更早的偏移，来重新处理过去的数据，或跳到最近的记录，从“现在”开始消费。</p>
+<p>这些特性的组合意味着Kafka的消费者是非常廉价的 - 它们可以来或走，不会对集群或其它消费者产生太多影响。例如，你可以使用我们的命令行工具来&quot;tail&rdquo;（应该理解为tail命令，查看文件的尾部）任何topic的内容，不会改变已存在消费者在消费的内容。</p>
+<p>log的分区有几个目的。首先，它们允许log扩展到超过一个单独服务器可容纳的大小。每个独立的分区必须匹配托管它的服务器的大小，但是一个topic可以有许多分区，因此，它可以处理任意大小的数据。其次，它们作为并发（parallelism）的单位 - 稍后再详细介绍。</p>
+<h3 id="分布distribution">分布（Distribution）</h3>
+<p>log的分区在Kafka集群的服务器之间分布，每个服务器处理共享分区的数据和请求。为了容错，每个分区在一个可配置数量的服务器之间复制。</p>
+<p>每个分区都有一个作为&quot;leader&quot;的服务器，0个或多个服务器作为&quot;followers&rdquo;。leader处理所有该分区的所有读和写请求，followers被动地复制eader。如果leader失败了，followers之一会自动成为新的leader。每个服务器作为它某些分区的leader，和其它分区的follower，因此集群中的负载是均衡的。</p>
+<h3 id="地域复制geo-replication">地域复制(Geo-Replication)</h3>
+<p>Kafka的MirrorMaker为你的集群提供地域复制的支持。使用MirrorMaker，消息会跨多个数据中心或云区域复制。你可以为备份和恢复使用主动/被动场景；或主动/主动场景来把数据发到离你的用户更近，或支持数据本地需求。</p>
+<h3 id="生产者">生产者</h3>
+<p>生产者发布数据到它们选择的topic。生产者负责决定记录分派到topic中的哪个分区。可以以一种简单负载均衡的循环方式来实现，或者可以根据某些语义化的分区函数来实现（例如基于记录中的某些键）。马上有更多关于分区的使用。</p>
+<h3 id="消费者">消费者</h3>
+<p>消费者以消费者组名称标记自己，每个发布到topic的记录分发到每个订阅的消费者组的一个消费者实例。消费者实例可以是跨进程或者跨机器。</p>
+<p>如果所有的消费者实例有相同的消费者组，那么记录会在消费者实例之间有效地负载均衡。</p>
+<p>如果所有的消费者实例有不同的消费者组，那么每个记录会广播到所有消费者进程。</p>
+<p><img src="/kafka/intro/consumer-groups.png" alt="consumer-groups"></p>
+<p>2个服务器的Kafka集群有4个分区（P0-P3）和2个消费者组，消费者组A有两个消费者实例，组B有4个。</p>
+<p>更常见地，我们发现topic有少量的消费者组，每个都是&quot;逻辑订阅者&rdquo;。每个组由许多消费者实例组成，为了扩展性和容错。这不过是发布-订阅语义，订阅者是一个消费者集群而不是一个单独的进程。</p>
+<p>Kafka中消费的实现方式是，通过在消费者实例之间分配log中的分区，因此每个实例在任何时间点都是一个分区的“公平共享”的独占消费者。维护组成员关系的进程由Kafka协议动态地处理。如果新的实例加入组，它们会接管其它组成员的分区；如果一个实例死亡，它的分区会分发给剩余的实例。</p>
+<p>Kafka只提供了在一个分区中记录的总顺序，不是在topic的不同分区中。每个分区的顺序，结合以键分区数据的能力对大多数程序来说就足够了。然而，如果你需要记录的总顺序，可以通过只有一个分区的topic实现，尽管这意味着每个消费者组只有一个消费者进程。</p>
+<h3 id="多租户">多租户</h3>
+<p>你可以把Kafka部署为一个多租户解决方案。多租户通过配置哪个topic可以生产或消费数据来开启。也有支持配额的操作。管理员可以在请求上定义和实施配额，控制客户端使用的broker资源。查看<a href="https://kafka.apache.org/documentation/#security">security documentation</a>获取更多信息。</p>
+<h3 id="保证">保证</h3>
+<p>在一个高级别上，Kafka提供以下的保证：</p>
+<ul>
+<li>
+<p>生产者发送到一个特定topic分区的消息会按照它们发送的顺序追加。即，如果一个记录M1与记录M2有同一个消费者发送，而且是M1先发，那么M1就会有一个比M2小的偏移量，出现在log的前面。</p>
+</li>
+<li>
+<p>一个消费者实例按记录在log中存储的顺序看到它们。</p>
+</li>
+<li>
+<p>对一个有复制因子N的topic，我们可以容忍最多N-1个服务器失败，而不会丢失任何提交到log中的记录。</p>
+</li>
+</ul>
+<p>更多关于这些保证的信息在文档中的设计部分给出。</p>
+<h3 id="kafka作为消息系统">Kafka作为消息系统</h3>
+<p>Kafka的流概念相比传统的企业消息系统如何？</p>
+<p>消息传统上有两种模型：队列和发布-订阅。在队列中，一个消费者池可以从一个服务器中读取，每个记录分发到其中之一；在发布-订阅模式中记录广播到所有消费者。两个模型都有一个优势和一个劣势。队列的优势是它允许在多个消费者实例之间分派数据的处理，使你扩展处理能力。不幸的是，队列不是多订阅者模式 - 一旦一个进程读取了数据就消失了。发布-订阅模式允许广播数据到多个进程，但是没有办法扩展处理，由于每个消息分发到每个订阅者。</p>
+<p>Kafka中的消费者组概念泛化了这两个概念。消费者组正如队列一样允许你在一个进程集合（消费者组的成员）之间分派处理。如发布-订阅模式一样，Kafka允许广播消息到多个消费者组。</p>
+<p>Kafka模型的有点事每个topic都有这两个属性 - 可以扩展处理，而且事多订阅者的 - 没必要选择其中之一。</p>
+<p>Kafka也比传统的消息系统有更强的顺序保证。</p>
+<p>一个传统的队列在服务器中维持着记录的顺序，如果多个消费者从队列中消费，那么服务器会按照记录存储的顺序分发。然而，尽管服务器按顺序发出记录，记录却事异步分发到消费者的，因此它们可能在不同的消费者中无序的到达。这实际上意味着在并行消费存在的情况下记录的顺序丢失了。消息系统通常的变通方法是通过“独占消费者”的概念，即，只允许一个进程从一个队列中消费，但是这当然意味着没有并行处理。</p>
+<p>Kafka做得更好。通过一个并行的概念 - 在topic中的分区，Kafka能够在一些消费者进程之间同时提供顺序保证和负载均衡。这是通过分派topic中的分区给消费者组中的消费者实现的，每个分区由组中的一个消费者消费。通过这样做，我们确保了消费者是该分区的唯一reader，并且按顺序消费数据。由于有许多分区，仍然会在多个消费者实例之间均衡负载。注意消费者组中的消费者实例不能比分区多。</p>
+<h3 id="kafka作为存储系统">Kafka作为存储系统</h3>
+<p>任何允许发布消息的消息队列，与消费消息进行了解耦，实际上作为运行时消息的存储系统。关于Kafka的不同在于它是一个很好的存储系统。</p>
+<p>写入Kafka的数据会写入硬盘并且复制以容错。Kafka允许生产者等待确认，因此一个写操作直到完全的复制后才认为是完成的，甚至如果被写入的服务器失败了也会保证持久化。</p>
+<p>Kafka使用的硬盘结构可以很好地扩展，不管在服务器上有50 KB或50 TB数据，Kafka的性能都是一样。</p>
+<p>作为严肃对待存储和允许客户端控制它们读取位置的结果，可以把Kafka想成一种特殊目的的分布式文件系统，专注于高性能、低延迟的commit log存储、复制和传播。</p>
+<p>关于Kafka的 commit log 存储和复制设计的细节，请查看<a href="https://kafka.apache.org/documentation/#design">这里</a>。</p>
+<h3 id="用于流处理的kafka">用于流处理的Kafka</h3>
+<p>只是读，写和存储数据流是不够的，目的是能够实时处理流。</p>
+<p>在Kafka中一个流处理器是任何从输入topic取出连续的数据流，在输入上执行一些处理，然后生产出连续的数据流到输出topic。</p>
+<p>例如，一个零售程序可能读取销售和发货流，通过计算这些数据输出再订购和价格调整的流。</p>
+<p>可以直接使用生产者和消费者API做一些简单的处理。然而对于更负复杂的转换，Kafka提供了一个完全集成的<a href="http://kafka.apache.org/documentation/streams">Streams API</a>。允许构建程序来做从一个流上计算聚合或把流连接在一起的复杂处理。</p>
+<p>这个工具帮助解决这种程序面临的困难问题：处理无序数据，随着代码变化重新处理输入，执行有状态的计算，等等。</p>
+<p>streams API构建于Kafka提供的核心原语之上：使用producer 和 consumer API处理输入，使用Kafka作为有状态的存储，使用相同的组机制在流处理器实例之间容错。</p>
+<h3 id="总结">总结</h3>
+<p>消息，存储和流处理的结合可能不常见，但是这对于作为一个流平台的Kafka来说是必不可少的。</p>
+<p>一个像HDFS的分布式文件系统允许为批处理存储静态文件。实际上一个像这样的系统允许存储和处理过去的历史数据。</p>
+<p>传统的的企业消息系统允许处理订阅后到来的未来的消息。在这种方式上构建的程序随着未来数据的到达而进行处理。</p>
+<p>Kafka结合了这两种能力，这种结合对把Kafka用为流程序和流数据管道平台是关键的。</p>
+<p>通过存储和低延迟订阅的结合，流程序可以用相同的方式对待过去和未来的数据。即，一个程序可以处理历史存储的数据，当到达最后一个记录时它可以随着将来数据的到达进行处理而不是结束。这是流处理广义的概念，把批量处理和消息驱动的程序归为一起。</p>
+<p>同样地对于流数据管道，订阅到实时事件的结合使它能够使用Kafka实现非常低延迟的管道；可靠存储数据的能力使它能够使用Kafka：数据的分发必须被保证的关键数据，或集成只能定期加载数据的离线系统，或可能长时间停机维护。流处理工具使随着数据到达做转换成为可能。</p>
+<p>更多关于保证、APIs和Kafka提供的能力的信息请查看<a href="http://kafka.apache.org/documentation.html">文档</a>。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">linweichao</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-05-13
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/%E7%AC%94%E8%AE%B0/%E5%85%B3%E4%BA%8Emybatis-spring-boot-%E5%A4%96%E9%83%A8%E5%B1%9E%E6%80%A7%E7%9A%84%E9%85%8D%E7%BD%AE/">
+            <span class="next-text nav-default">关于mybatis Spring Boot 外部属性的配置</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="http://example.org/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">linweichao</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

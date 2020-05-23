@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>翻译 on 林伟超</title>
+    <link>http://example.org/tags/%E7%BF%BB%E8%AF%91/</link>
+    <description>Recent content in 翻译 on 林伟超</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 13 May 2020 21:07:22 +0800</lastBuildDate>
+    
+	<atom:link href="http://example.org/tags/%E7%BF%BB%E8%AF%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kafka介绍</title>
+      <link>http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Wed, 13 May 2020 21:07:22 +0800</pubDate>
+      
+      <guid>http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/</guid>
+      <description>内容来源于官方文档 Apache kafka® 是一个分布式流平台。 这是什么意思呢？ 一个流平台有三个关键的功能： 发布和订阅记录流（streams of recor</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,10 +6,19 @@
     <description>Recent content on 林伟超</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 03 May 2020 17:38:12 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 13 May 2020 21:07:22 +0800</lastBuildDate>
     
 	<atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Kafka介绍</title>
+      <link>http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Wed, 13 May 2020 21:07:22 +0800</pubDate>
+      
+      <guid>http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/</guid>
+      <description>内容来源于官方文档 Apache kafka® 是一个分布式流平台。 这是什么意思呢？ 一个流平台有三个关键的功能： 发布和订阅记录流（streams of recor</description>
+    </item>
     
     <item>
       <title>关于mybatis Spring Boot 外部属性的配置</title>
