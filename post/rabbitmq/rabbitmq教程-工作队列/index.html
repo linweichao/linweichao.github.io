@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>RabbitMQ教程 - 工作队列 - 林伟超</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="linweichao" /><meta name="description" content="文章来源于对官方文档的翻译 工作队列（Work Queue） （使用Java Client） 在第一个教程中我们写了从一个命名的队列中发送和接收消息的" /><meta name="keywords" content="个人, 技术, 博客" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.0 with theme even" />
+
+
+<link rel="canonical" href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="RabbitMQ教程 - 工作队列" />
+<meta property="og:description" content="文章来源于对官方文档的翻译 工作队列（Work Queue） （使用Java Client） 在第一个教程中我们写了从一个命名的队列中发送和接收消息的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97/" />
+<meta property="article:published_time" content="2020-05-24T14:58:31+08:00" />
+<meta property="article:modified_time" content="2020-05-24T14:58:31+08:00" />
+<meta itemprop="name" content="RabbitMQ教程 - 工作队列">
+<meta itemprop="description" content="文章来源于对官方文档的翻译 工作队列（Work Queue） （使用Java Client） 在第一个教程中我们写了从一个命名的队列中发送和接收消息的">
+<meta itemprop="datePublished" content="2020-05-24T14:58:31&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-24T14:58:31&#43;08:00" />
+<meta itemprop="wordCount" content="3821">
+
+
+
+<meta itemprop="keywords" content="翻译," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RabbitMQ教程 - 工作队列"/>
+<meta name="twitter:description" content="文章来源于对官方文档的翻译 工作队列（Work Queue） （使用Java Client） 在第一个教程中我们写了从一个命名的队列中发送和接收消息的"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">林伟超</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">所有文章</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">目录</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">林伟超</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">所有文章</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">目录</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">RabbitMQ教程 - 工作队列</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-05-24 </span>
+        <div class="post-category">
+            <a href="/categories/rabbitmq/"> RabbitMQ </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#工作队列work-queue">工作队列（Work Queue）</a>
+      <ul>
+        <li><a href="#使用java-client">（使用Java Client）</a></li>
+      </ul>
+    </li>
+    <li><a href="#准备">准备</a></li>
+    <li><a href="#循环round-robin分发">循环（round-robin）分发</a></li>
+    <li><a href="#消息确认">消息确认</a>
+      <ul>
+        <li><a href="#忘记确认">忘记确认</a></li>
+      </ul>
+    </li>
+    <li><a href="#消息持久性">消息持久性</a>
+      <ul>
+        <li><a href="#消息持久性的说明">消息持久性的说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#公平分发">公平分发</a>
+      <ul>
+        <li><a href="#关于队列大小的注意事项">关于队列大小的注意事项</a></li>
+      </ul>
+    </li>
+    <li><a href="#把所有放到一起">把所有放到一起</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>文章来源于对<a href="https://www.rabbitmq.com/tutorials/tutorial-two-java.html">官方文档</a>的翻译</p>
+<h2 id="工作队列work-queue">工作队列（Work Queue）</h2>
+<h3 id="使用java-client">（使用Java Client）</h3>
+<p><img src="/RabbitMQ/tutorial-two/python-two.webp" alt="app"></p>
+<p>在<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-hello-world/">第一个教程</a>中我们写了从一个命名的队列中发送和接收消息的程序。在这篇中我们会创建*工作队列（Work Queue）*用来在多个工作者（worker）之间分发耗时的任务。</p>
+<p>工作队列（亦称<em>任务队列（Task Queue）</em>）背后的思想是避免立即做一个资源密集的任务，并且需要等待它完成。取而代之的是我们安排这个任务稍后再做。我们封装*任务（task）*作为一个消息然后发送到队列。一个运行在后台的工作者进程会取出（pop）任务并最终执行这个工作。当你运行多个工作者，任务会在它们之间共享。</p>
+<p>这个概念在web程序中特别有用，不可能在一个短暂的HTTP请求窗口中处理一个复杂的任务。</p>
+<h2 id="准备">准备</h2>
+<p>在这个教程的上一部分我们发送了一个包含”Hello World!“的消息。现在我们会发送代表复杂任务的字符串。我们没有真实的任务，像调整图片大小或渲染pdf文件，因此让我们假装很忙 - 通过使用<code>Thread.sleep()</code>功能。我们会把字符串中的点数量作为它的复杂性；每个点会解释为一秒钟的”工作“。例如，由Hello&hellip;描述的伪造任务会花3秒钟。</p>
+<p>我们会从前面例子中的<code>Send.java</code>代码中些微地修改下，允许任意消息从命令行中发送。这个程序会调度任务到工作队列，因此让我们把它命名为<code>NewTask.java</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">&#34; &#34;</span><span class="o">,</span> <span class="n">argv</span><span class="o">);</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&#34;&#34;</span><span class="o">,</span> <span class="s">&#34;hello&#34;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Sent &#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们旧的<code>Recv.java</code>程序也需要一些改变：它需要对消息体中的每个点伪装一秒钟的任务。它会处理分发的消息和执行任务，因此叫它<code>Worker.java</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">DeliverCallback</span> <span class="n">deliverCallback</span> <span class="o">=</span> <span class="o">(</span><span class="n">consumerTag</span><span class="o">,</span> <span class="n">delivery</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+  <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">(),</span> <span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
+
+  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Received &#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="n">doWork</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Done&#34;</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">};</span>
+<span class="kt">boolean</span> <span class="n">autoAck</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">// acknowledgment is covered below
+</span><span class="c1"></span><span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">TASK_QUEUE_NAME</span><span class="o">,</span> <span class="n">autoAck</span><span class="o">,</span> <span class="n">deliverCallback</span><span class="o">,</span> <span class="n">consumerTag</span> <span class="o">-&gt;</span> <span class="o">{</span> <span class="o">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们伪装的任务来模拟执行时间：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">doWork</span><span class="o">(</span><span class="n">String</span> <span class="n">task</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">char</span> <span class="n">ch</span><span class="o">:</span> <span class="n">task</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;.&#39;</span><span class="o">)</span> <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">1000</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>像教程一一样编译它们（jar文件在工作目录中而且设置了<code>CP</code>环境变量）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">javac -cp <span class="nv">$CP</span> NewTask.java Worker.java
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="循环round-robin分发">循环（round-robin）分发</h2>
+<p>使用任务队列的一个优点是简单并行任务的能力。如果我们积压了一些工作，我们只需要添加更多的工作者，这种方式，简单扩展。</p>
+<p>首先，让我们尝试同时运行两个工作者实例。它们都会从队列获取消息，但准确来说是怎么样的？让我们看一行。</p>
+<p>我们需要3个打开的控制台。两个运行工作者程序。这些控制台将会是我们的两个消费者 - C1 和 C2.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># shell 1</span>
+java -cp <span class="nv">$CP</span> Worker
+<span class="c1"># =&gt; [*] Waiting for messages. To exit press CTRL+C</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># shell 2</span>
+java -cp <span class="nv">$CP</span> Worker
+<span class="c1"># =&gt; [*] Waiting for messages. To exit press CTRL+C</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在第三个控制台我们会发布新任务。一旦你启动了消费者就可以发布一些消息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># shell 3</span>
+java -cp <span class="nv">$CP</span> NewTask First message.
+<span class="c1"># =&gt; [x] Sent &#39;First message.&#39;</span>
+java -cp <span class="nv">$CP</span> NewTask Second message..
+<span class="c1"># =&gt; [x] Sent &#39;Second message..&#39;</span>
+java -cp <span class="nv">$CP</span> NewTask Third message...
+<span class="c1"># =&gt; [x] Sent &#39;Third message...&#39;</span>
+java -cp <span class="nv">$CP</span> NewTask Fourth message....
+<span class="c1"># =&gt; [x] Sent &#39;Fourth message....&#39;</span>
+java -cp <span class="nv">$CP</span> NewTask Fifth message.....
+<span class="c1"># =&gt; [x] Sent &#39;Fifth message.....&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>让我们看一下分发到工作者的是什么：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> Worker
+<span class="c1"># =&gt; [*] Waiting for messages. To exit press CTRL+C</span>
+<span class="c1"># =&gt; [x] Received &#39;First message.&#39;</span>
+<span class="c1"># =&gt; [x] Received &#39;Third message...&#39;</span>
+<span class="c1"># =&gt; [x] Received &#39;Fifth message.....&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> Worker
+<span class="c1"># =&gt; [*] Waiting for messages. To exit press CTRL+C</span>
+<span class="c1"># =&gt; [x] Received &#39;Second message..&#39;</span>
+<span class="c1"># =&gt; [x] Received &#39;Fourth message....&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>默认，RabbitMQ会发送消息到下一个消费者，依次。平均每个消费者会得到相同数量的消息。这种分发消息的方式叫做循环（round-robin）。试一下三个或更多工作者。</p>
+<h2 id="消息确认">消息确认</h2>
+<p>做一个任务要花几秒钟。你可能想知道如果消费者之一开始一个长时间的任务，只是部分的完成然后死亡时会发生什么。用我们现在的代码，一旦RabbitMQ分发消息给消费者，它立即把它标记为删除。在这种情况，如果你杀掉一个工作者我们会丢失它刚刚处理的消息。同样也会丢失所有分发到这个工作者但是还没处理的消息。</p>
+<p>但是我们不想丢失任何任务。如果一个工作者死亡了，我们希望任务可以分发到其它工作者。</p>
+<p>为了保证消息决不会丢失，RabbitMQ支持<a href="https://www.rabbitmq.com/confirms.html">消息确认</a>。一个ack（确认）由消费者发送回来告诉RabbitMQ一个特定的消息已经被接收，处理，RabbitMQ可以自由删除它。</p>
+<p>如果一个消费者死亡（channel关闭，connection关闭或TCP连接丢失）而没有发送ack，RabbitMQ会推断一个消息没有完全处理，会重新如队。如果同时有其它消费者在线，它会快速重新分发给其它消费者。这种方式你可以确认没有消息丢失，即使工作者偶然间死亡。</p>
+<p>没有任何的消息超时；RabbitMQ会在消费者死亡时重新分发消息。即使处理一个消息花费很长，很长时间也没事。</p>
+<p><a href="https://www.rabbitmq.com/confirms.html">手动消息确认</a>默认打开。之前的例子我们通过<code>autoAck=true</code>标记明确关闭了。是时候把这个标记设置成<code>false</code>然后从工作者中发送一个合适的确认，一旦完成了任务。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">basicQos</span><span class="o">(</span><span class="n">1</span><span class="o">);</span> <span class="c1">// accept only one unack-ed message at a time (see below)
+</span><span class="c1"></span>
+<span class="n">DeliverCallback</span> <span class="n">deliverCallback</span> <span class="o">=</span> <span class="o">(</span><span class="n">consumerTag</span><span class="o">,</span> <span class="n">delivery</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+  <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">(),</span> <span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
+
+  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Received &#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="n">doWork</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Done&#34;</span><span class="o">);</span>
+    <span class="n">channel</span><span class="o">.</span><span class="na">basicAck</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getEnvelope</span><span class="o">().</span><span class="na">getDeliveryTag</span><span class="o">(),</span> <span class="kc">false</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">};</span>
+<span class="kt">boolean</span> <span class="n">autoAck</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">TASK_QUEUE_NAME</span><span class="o">,</span> <span class="n">autoAck</span><span class="o">,</span> <span class="n">deliverCallback</span><span class="o">,</span> <span class="n">consumerTag</span> <span class="o">-&gt;</span> <span class="o">{</span> <span class="o">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用这段代码我们可以确认即使使用CTRL+C在工作者处理消息时杀掉它，不会丢失任何东西。工作者死亡后所有未确认的消息很快会重新分发。</p>
+<p>确认必须在接收分发相同的channel中发送。尝试使用不同channel确认导致channel级别的协议异常。查看<a href="https://www.rabbitmq.com/confirms.html">确认的文档指南</a>学习更多。</p>
+<h3 id="忘记确认">忘记确认</h3>
+<p>忘记<code>basicAck</code>是一个很常见的错误。它是一个简单的错误，但后果是严重的。当你的客户端退出时消息会重新分发（看起来像随机分发），但是RabbitMQ会占用更多内存，由于它不能释放任何未确认的消息。</p>
+<p>为了调试这种类型的错误你可以使用<code>rabbitmqctl</code>来打印<code>messages_unacknowledged</code>字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo rabbitmqctl list_queues name messages_ready messages_unacknowledged
+</code></pre></td></tr></table>
+</div>
+</div><p>或者在Windows中，去掉sudo：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">rabbitmqctl.bat list_queues name messages_ready messages_unacknowledged
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="消息持久性">消息持久性</h2>
+<p>我们已经学习了如何确保即使消费者死亡，任务也不会丢失。但是如果RabbitMQ服务器停止我们的任务仍然会丢失。</p>
+<p>当RabbitMQ退出或崩溃它会忘记队列和消息，除非你告诉它不要。确保消息不丢失需要两件事情：需要标记队列和消息为持久的。</p>
+<p>首先，我们需要确保队列在一个RabbitMQ节点重启后存活。为了达到这个目的，我们需要声明它为<em>持久的（durable）</em>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">boolean</span> <span class="n">durable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="s">&#34;hello&#34;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>尽管这个命令自身是正确的，依我们现在的配置它不会生效。这个因为我们已经定义了一个叫做<code>hello</code>的非持久性队列。RabbitMQ不允许使用不同参数重新定义已存在的队列，对试图这么做的程序将会返回错误。但是有一个快速的变通方法 - 让我们定义一个不同名字的队列，例如<code>task_queue</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">boolean</span> <span class="n">durable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="s">&#34;task_queue&#34;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>queueDeclare</code>的改变需要应用到消费者和生产者的代码。</p>
+<p>这时候，我们确定<code>task_queue</code>队列即使RabbitMQ重启也不会丢失。现在我们需要标记我们的消息为持久化的 - 通过设置<code>MessageProperties</code>(实现了<code>BasicProperties</code>)值为<code>PERSISTENT_TEXT_PLAIN</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.rabbitmq.client.MessageProperties</span><span class="o">;</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&#34;&#34;</span><span class="o">,</span> <span class="s">&#34;task_queue&#34;</span><span class="o">,</span>
+            <span class="n">MessageProperties</span><span class="o">.</span><span class="na">PERSISTENT_TEXT_PLAIN</span><span class="o">,</span>
+            <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="消息持久性的说明">消息持久性的说明</h3>
+<p>标记消息为持久的不能完全保证消息不会丢失。尽管它告诉RabbitMQ把消息保存到硬盘，当RabbitMQ接收消息和没有保存时仍然有一个短暂的时间窗口。同样，RabbitMQ没有为每个消息做<code>fsync(2)</code> &ndash; 可能只是保存到缓存没有真正写入硬盘。持久性的保证是不健壮的，但是它对于我们简单的任务队列足够了。如果你需要更强的保证那么你可以使用<a href="https://www.rabbitmq.com/confirms.html">publisher confirms</a>。</p>
+<h2 id="公平分发">公平分发</h2>
+<p>你可能注意到分发仍然没有精确按我们所想的来工作。例如，一个有两个工作者的情况，当所有奇数消息是沉重的，偶数消息是轻量的，一个工作者会持续忙碌，另一个几乎不做任何工作。嗯，RabbitMQ不知道关于这些的任何事，仍然均匀地分发消息。</p>
+<p>这会发生是因为RabbitMQ只是当消息进入队列时分发消息。它不会查看一个消费者未确认消息的数量。它只是盲目地分发第n个消息给第n个消费者。</p>
+<p><img src="/RabbitMQ/tutorial-two/prefetch-count.webp" alt="prefetch-count"></p>
+<p>为了克服这个我们可以使用<code>basicQos</code>方法，带有<code>prefetchCount</code> = <code>1</code> 的设置。这告诉RabbitMQ一次不要给一个工作者超过一个消息。或者，换句话说，不要分发新的消息给工作者，直到它处理和确认了前面的一个。取而代之，它会分发这个消息到下一个不忙碌的工作者。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span> <span class="n">prefetchCount</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">basicQos</span><span class="o">(</span><span class="n">prefetchCount</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="关于队列大小的注意事项">关于队列大小的注意事项</h3>
+<p>如果所有的工作者都很忙，你的队列会被装满。你会想要留意这，可能添加更多工作者，或者有其它策略。</p>
+<h2 id="把所有放到一起">把所有放到一起</h2>
+<p><code>NewTask.java</code>类的最终代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.MessageProperties</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewTask</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TASK_QUEUE_NAME</span> <span class="o">=</span> <span class="s">&#34;task_queue&#34;</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+    <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">);</span>
+    <span class="k">try</span> <span class="o">(</span><span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+         <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">TASK_QUEUE_NAME</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">&#34; &#34;</span><span class="o">,</span> <span class="n">argv</span><span class="o">);</span>
+
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&#34;&#34;</span><span class="o">,</span> <span class="n">TASK_QUEUE_NAME</span><span class="o">,</span>
+                <span class="n">MessageProperties</span><span class="o">.</span><span class="na">PERSISTENT_TEXT_PLAIN</span><span class="o">,</span>
+                <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">&#34;UTF-8&#34;</span><span class="o">));</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Sent &#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>(<a href="http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/NewTask.java">NewTask.java的源码</a>)</p>
+<p>和<code>Worker.java</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.DeliverCallback</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Worker</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TASK_QUEUE_NAME</span> <span class="o">=</span> <span class="s">&#34;task_queue&#34;</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+    <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+    <span class="kd">final</span> <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+
+    <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">TASK_QUEUE_NAME</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [*] Waiting for messages. To exit press CTRL+C&#34;</span><span class="o">);</span>
+
+    <span class="n">channel</span><span class="o">.</span><span class="na">basicQos</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+
+    <span class="n">DeliverCallback</span> <span class="n">deliverCallback</span> <span class="o">=</span> <span class="o">(</span><span class="n">consumerTag</span><span class="o">,</span> <span class="n">delivery</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">(),</span> <span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Received &#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">doWork</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Done&#34;</span><span class="o">);</span>
+            <span class="n">channel</span><span class="o">.</span><span class="na">basicAck</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getEnvelope</span><span class="o">().</span><span class="na">getDeliveryTag</span><span class="o">(),</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+    <span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">TASK_QUEUE_NAME</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="n">deliverCallback</span><span class="o">,</span> <span class="n">consumerTag</span> <span class="o">-&gt;</span> <span class="o">{</span> <span class="o">});</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">doWork</span><span class="o">(</span><span class="n">String</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">char</span> <span class="n">ch</span> <span class="o">:</span> <span class="n">task</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;.&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">1000</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">_ignored</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">interrupt</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>(<a href="http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/Worker.java">Worker.java的源码</a>)</p>
+<p>使用消息确认和<code>prefetchCount</code>你可以设置一个工作队列。持久性的选项使任务即使RabbitMQ重启也会存活。</p>
+<p>关于更多关于<code>Channel</code>方法和<code>MessageProperties</code>的信息，可以浏览<a href="https://rabbitmq.github.io/rabbitmq-java-client/api/current/">在线JavaDocs</a>。</p>
+<p>现在可以继续<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97/">教程3</a>，学习如何分发相同消息到多个消费者。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">linweichao</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-05-24
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-hello-world/">
+            <span class="next-text nav-default">RabbitMQ教程 - Hello World</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="http://example.org/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">linweichao</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -3,7 +3,56 @@
   
   <url>
     <loc>http://example.org/categories/</loc>
-    <lastmod>2020-05-13T21:07:22+08:00</lastmod>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/post/</loc>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/categories/rabbitmq/</loc>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97/</loc>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tags/</loc>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/</loc>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tags/%E7%BF%BB%E8%AF%91/</loc>
+    <lastmod>2020-05-24T14:58:31+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-hello-world/</loc>
+    <lastmod>2020-05-24T10:15:28+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -17,34 +66,6 @@
   
   <url>
     <loc>http://example.org/post/kafka/kafka%E4%BB%8B%E7%BB%8D/</loc>
-    <lastmod>2020-05-13T21:07:22+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/post/</loc>
-    <lastmod>2020-05-13T21:07:22+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/tags/</loc>
-    <lastmod>2020-05-13T21:07:22+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/</loc>
-    <lastmod>2020-05-13T21:07:22+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/tags/%E7%BF%BB%E8%AF%91/</loc>
     <lastmod>2020-05-13T21:07:22+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

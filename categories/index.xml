@@ -6,10 +6,19 @@
     <description>Recent content in Categories on 林伟超</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 13 May 2020 21:07:22 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 24 May 2020 14:58:31 +0800</lastBuildDate>
     
 	<atom:link href="http://example.org/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>RabbitMQ</title>
+      <link>http://example.org/categories/rabbitmq/</link>
+      <pubDate>Sun, 24 May 2020 14:58:31 +0800</pubDate>
+      
+      <guid>http://example.org/categories/rabbitmq/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>kafka</title>
