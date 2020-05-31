@@ -6,10 +6,55 @@
     <description>Recent content on 林伟超</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 24 May 2020 14:58:31 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2020 10:03:47 +0800</lastBuildDate>
     
 	<atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>RabbitMQ教程 - 发布者确认</title>
+      <link>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83%E8%80%85%E7%A1%AE%E8%AE%A4/</link>
+      <pubDate>Sun, 31 May 2020 10:03:47 +0800</pubDate>
+      
+      <guid>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83%E8%80%85%E7%A1%AE%E8%AE%A4/</guid>
+      <description>文章来源于对官方文档的翻译。 发布者确认(Publisher Confirms) 发布者确认是RabbitMQ的扩展实现了可靠发布。当在通道（channel）上启</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ教程   RPC</title>
+      <link>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/</link>
+      <pubDate>Sat, 30 May 2020 16:10:21 +0800</pubDate>
+      
+      <guid>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/</guid>
+      <description>文章来源于对官方文档的翻译。 远程过程调用（RPC） （使用Java客户端） 在第二个教程中我们学习了如何使用工作队列在多个工作者之间分发耗时任务</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ教程 - Topics</title>
+      <link>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-topics/</link>
+      <pubDate>Sat, 30 May 2020 14:37:29 +0800</pubDate>
+      
+      <guid>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-topics/</guid>
+      <description>文章来源于对官方文档的翻译。 Topics (使用Java客户端) 在前面的教程中我们改进了我们的日志系统。取代只能虚拟广播的fanout exchange，</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ教程 - 路由</title>
+      <link>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E8%B7%AF%E7%94%B1/</link>
+      <pubDate>Wed, 27 May 2020 19:59:38 +0800</pubDate>
+      
+      <guid>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E8%B7%AF%E7%94%B1/</guid>
+      <description>文章来源于对官方文档的翻译。 路由 （使用Java客户端） 在前面的教程中我们构建了一个简单的日志系统。我们能够广播日志消息给许多接收者。 在这篇教</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ教程 - 发布-订阅</title>
+      <link>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85/</link>
+      <pubDate>Mon, 25 May 2020 19:59:59 +0800</pubDate>
+      
+      <guid>http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85/</guid>
+      <description>文章来源于对官方文档的翻译 发布/订阅 （使用Java客户端） 在前面的教程中我们创建了一个工作队列。工作队列背后的设想是每个任务都分发到精确地一</description>
+    </item>
     
     <item>
       <title>RabbitMQ教程 - 工作队列</title>

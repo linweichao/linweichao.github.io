@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>RabbitMQ教程 - Topics - 林伟超</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="linweichao" /><meta name="description" content="文章来源于对官方文档的翻译。 Topics (使用Java客户端) 在前面的教程中我们改进了我们的日志系统。取代只能虚拟广播的fanout exchange，" /><meta name="keywords" content="个人, 技术, 博客" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.0 with theme even" />
+
+
+<link rel="canonical" href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-topics/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="RabbitMQ教程 - Topics" />
+<meta property="og:description" content="文章来源于对官方文档的翻译。 Topics (使用Java客户端) 在前面的教程中我们改进了我们的日志系统。取代只能虚拟广播的fanout exchange，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-topics/" />
+<meta property="article:published_time" content="2020-05-30T14:37:29+08:00" />
+<meta property="article:modified_time" content="2020-05-30T14:37:29+08:00" />
+<meta itemprop="name" content="RabbitMQ教程 - Topics">
+<meta itemprop="description" content="文章来源于对官方文档的翻译。 Topics (使用Java客户端) 在前面的教程中我们改进了我们的日志系统。取代只能虚拟广播的fanout exchange，">
+<meta itemprop="datePublished" content="2020-05-30T14:37:29&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-30T14:37:29&#43;08:00" />
+<meta itemprop="wordCount" content="2250">
+
+
+
+<meta itemprop="keywords" content="翻译," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RabbitMQ教程 - Topics"/>
+<meta name="twitter:description" content="文章来源于对官方文档的翻译。 Topics (使用Java客户端) 在前面的教程中我们改进了我们的日志系统。取代只能虚拟广播的fanout exchange，"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">林伟超</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">所有文章</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">目录</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">林伟超</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">所有文章</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">目录</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">RabbitMQ教程 - Topics</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-05-30 </span>
+        <div class="post-category">
+            <a href="/categories/rabbitmq/"> RabbitMQ </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a>
+      <ul>
+        <li><a href="#使用java客户端">(使用Java客户端)</a></li>
+      </ul>
+    </li>
+    <li><a href="#topic-exchange">Topic exchange</a>
+      <ul>
+        <li><a href="#tpoic-exchange">tpoic exchange</a></li>
+      </ul>
+    </li>
+    <li><a href="#将所有放到一起">将所有放到一起</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>文章来源于对<a href="https://www.rabbitmq.com/tutorials/tutorial-five-java.html">官方文档</a>的翻译。</p>
+<h2 id="topics">Topics</h2>
+<h3 id="使用java客户端">(使用Java客户端)</h3>
+<p>在<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E8%B7%AF%E7%94%B1/">前面的教程</a>中我们改进了我们的日志系统。取代只能虚拟广播的<code>fanout</code> exchange，我们使用了<code>direct</code>，获得了选择性接收日志的能力。</p>
+<p>尽管使用<code>direct</code> exchange改进了我们的系统，它仍然有限制 - 它不能基于多个条件路由。</p>
+<p>在我们的日志系统中，我们可能想不仅仅基于严重性订阅，而且想基于发出日志的源。你可能从<code>syslog</code> unix工具知道了这个概念，它可以基于严重性（info/warn/crit&hellip;）和工具（auth/cron/kern）路由日志。</p>
+<p>那会给我们许多灵活性 - 我们可能想只监听&rsquo;cron'的关键错误，和&rsquo;kern'的所有日志。</p>
+<p>为了在我们的日志系统中实现这个，我们需要学习更复杂的<code>topic</code> exchange。</p>
+<h2 id="topic-exchange">Topic exchange</h2>
+<p>发送到<code>topic</code> exchange的消息不能有任意的<code>rounting_key</code> - 它必须是一个单词列表，由点号分隔。单词可以是任意的，但是它们通常指定了关于消息的特性。一些合法的路由键（routing key）例子：“<code>stock.usd.nyse</code>”, “<code>nyse.vmw</code>”，“<code>quick.orange.rabbit</code>”。路由键中可以按你喜欢指定许多单词，最多255字节限制。</p>
+<p>绑定键（binding key）必须使用相同的格式。<code>topic</code> exchange背后的逻辑和<code>direct</code>相似 - 以特定路由键发送的消息会被分发给所有以匹配的绑定键绑定的队列。然而对绑定键有两个重要的特殊情况：</p>
+<ul>
+<li><code>*</code>(start)可以替代恰好一个单词。</li>
+<li><code>#</code>(hash)可以替代0个或多个单词。</li>
+</ul>
+<p>在一个例子中解释这个很容易：</p>
+<p><img src="/RabbitMQ/tutorial-five/python-five.webp" alt="five"></p>
+<p>在这个例子中，我们将要发送描述动物的消息。信息会带着包含三个单词（两个点号）的路由键发送。路由键中的第一个单次描述速度，第二个是颜色，第三个是物种：“<code>&lt;speed&gt;.&lt;colour&gt;.&lt;species&gt;</code>”。</p>
+<p>我们创建了三个绑定：Q1用绑定键&quot;<code>*.orange.*</code>&rdquo;，Q2是‘<code>&quot;*.*.rabbit&quot;</code>’和&quot;<code>lazy.#</code>&rdquo;.</p>
+<p>这三个绑定可以这样总结：</p>
+<ul>
+<li>Q1对所有橙色（orange）动物感兴趣</li>
+<li>Q2想监听所有关于兔子(rabbit)和慢（lazy）动物的消息。</li>
+</ul>
+<p>一个路由键设置为“<code>quick.orange.rabbit</code>”的消息会传递到两个队列。消息“<code>lazy.orange.elephant</code>”同样是发送给两个。另一方面，&ldquo;<code>quick.orange.fox</code>&quot;会给第一个队列，&ldquo;<code>lazy.brown.fox</code>&quot;只到第二个。&ldquo;<code>lazy.pink.rabbit</code>&quot;只会发给第二个队列一次，尽管匹配了两个绑定。&ldquo;<code>quick.brown.fox</code>&quot;不匹配任何绑定所以会被丢弃。</p>
+<p>如果我们破坏约定发送有一个或四个单次的消息会发生什么，如“<code>orange</code>”或“<code>quick.orange.male.rabbit</code>”？嗯，这些消息不会匹配任何绑定，会丢失。</p>
+<p>另一方面&quot;<code>lazy.orange.male.rabbit</code>&rdquo;，尽管有4个单次，会匹配最后一个绑定，因此被发送到第二个队列。</p>
+<h3 id="tpoic-exchange">tpoic exchange</h3>
+<p>topic exchange 很强大，它可以像其它exchange一样。</p>
+<p>当一个队列以&quot;<code>#</code>&rdquo;（hash）绑定键绑定 - 它会收到所有消息，不考虑路由键 - 像<code>fanout</code> exchange。</p>
+<p>当特殊字符&quot;<code>*</code>&rdquo;(star)和&quot;<code>#</code>&rdquo;(hash)不在绑定中使用，topic  exchange就像<code>direct</code>一样。</p>
+<h2 id="将所有放到一起">将所有放到一起</h2>
+<p>我们将要在我们的日志系统中使用<code>topic</code> exchange。我们会以一个工作设想开始，即日志的路由键会有两个单词：&ldquo;<code>&lt;facility&gt;.&lt;severity&gt;</code>&rdquo;。</p>
+<p>代码和<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E8%B7%AF%E7%94%B1/">之前的教程</a>几乎一样。</p>
+<p><code>EmitLogTopic.java</code>的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">EmitLogTopic</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&#34;topic_logs&#34;</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+    <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">);</span>
+    <span class="k">try</span> <span class="o">(</span><span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+         <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">())</span> <span class="o">{</span>
+
+        <span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&#34;topic&#34;</span><span class="o">);</span>
+
+        <span class="n">String</span> <span class="n">routingKey</span> <span class="o">=</span> <span class="n">getRouting</span><span class="o">(</span><span class="n">argv</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">getMessage</span><span class="o">(</span><span class="n">argv</span><span class="o">);</span>
+
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="n">routingKey</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">&#34;UTF-8&#34;</span><span class="o">));</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Sent &#39;&#34;</span> <span class="o">+</span> <span class="n">routingKey</span> <span class="o">+</span> <span class="s">&#34;&#39;:&#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="c1">//..
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ReceiveLogsTopic.java</code>的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.rabbitmq.client.DeliverCallback</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ReceiveLogsTopic</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&#34;topic_logs&#34;</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+    <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">);</span>
+    <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+    <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+
+    <span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&#34;topic&#34;</span><span class="o">);</span>
+    <span class="n">String</span> <span class="n">queueName</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">().</span><span class="na">getQueue</span><span class="o">();</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">argv</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Usage: ReceiveLogsTopic [binding_key]...&#34;</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">exit</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">bindingKey</span> <span class="o">:</span> <span class="n">argv</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueBind</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="n">bindingKey</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [*] Waiting for messages. To exit press CTRL+C&#34;</span><span class="o">);</span>
+
+    <span class="n">DeliverCallback</span> <span class="n">deliverCallback</span> <span class="o">=</span> <span class="o">(</span><span class="n">consumerTag</span><span class="o">,</span> <span class="n">delivery</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">(),</span> <span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Received &#39;&#34;</span> <span class="o">+</span>
+            <span class="n">delivery</span><span class="o">.</span><span class="na">getEnvelope</span><span class="o">().</span><span class="na">getRoutingKey</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;&#39;:&#39;&#34;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+    <span class="o">};</span>
+    <span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">deliverCallback</span><span class="o">,</span> <span class="n">consumerTag</span> <span class="o">-&gt;</span> <span class="o">{</span> <span class="o">});</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>编译和运行这个例子，包含<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-hello-world/">教程1</a>中的类路径 - 在Windows中使用 %CP%。</p>
+<p>编译：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">javac -cp <span class="nv">$CP</span> ReceiveLogsTopic.java EmitLogTopic.java
+</code></pre></td></tr></table>
+</div>
+</div><p>接收所有日志：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> ReceiveLogsTopic <span class="s2">&#34;#&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>接收所有“<code>kern</code>”的日志：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> ReceiveLogsTopic <span class="s2">&#34;kern.*&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>或者你想只接收关于&quot;<code>critical</code>&quot;的日志：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> ReceiveLogsTopic <span class="s2">&#34;*.critical&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以创建多个绑定：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> ReceiveLogsTopic <span class="s2">&#34;kern.*&#34;</span> <span class="s2">&#34;*.critical&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>发出一个带有&quot;<code>kern.critical</code>&quot;路由键的日志：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> EmitLogTopic <span class="s2">&#34;kern.critical&#34;</span> <span class="s2">&#34;A critical kernel error&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>用这些程序玩得开心。注意代码没有对路由或绑定键做任何设想，你可能想用多余两个路由键参数来玩耍。</p>
+<p>（完整源码<a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/EmitLogTopic.java"> EmitLogTopic.java</a>和<a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/ReceiveLogsTopic.java">ReceiveLogsTopic.java</a>）</p>
+<p>接下来，在<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/">教程6</a>中了解如何使用往返消息作为远程过程调用（RPC）。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">linweichao</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-05-30
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">RabbitMQ教程   RPC</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E8%B7%AF%E7%94%B1/">
+            <span class="next-text nav-default">RabbitMQ教程 - 路由</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="http://example.org/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">linweichao</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

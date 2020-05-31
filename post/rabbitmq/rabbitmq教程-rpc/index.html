@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>RabbitMQ教程   RPC - 林伟超</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="linweichao" /><meta name="description" content="文章来源于对官方文档的翻译。 远程过程调用（RPC） （使用Java客户端） 在第二个教程中我们学习了如何使用工作队列在多个工作者之间分发耗时任务" /><meta name="keywords" content="个人, 技术, 博客" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.0 with theme even" />
+
+
+<link rel="canonical" href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="RabbitMQ教程   RPC" />
+<meta property="og:description" content="文章来源于对官方文档的翻译。 远程过程调用（RPC） （使用Java客户端） 在第二个教程中我们学习了如何使用工作队列在多个工作者之间分发耗时任务" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/" />
+<meta property="article:published_time" content="2020-05-30T16:10:21+08:00" />
+<meta property="article:modified_time" content="2020-05-30T16:10:21+08:00" />
+<meta itemprop="name" content="RabbitMQ教程   RPC">
+<meta itemprop="description" content="文章来源于对官方文档的翻译。 远程过程调用（RPC） （使用Java客户端） 在第二个教程中我们学习了如何使用工作队列在多个工作者之间分发耗时任务">
+<meta itemprop="datePublished" content="2020-05-30T16:10:21&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-30T16:10:21&#43;08:00" />
+<meta itemprop="wordCount" content="2819">
+
+
+
+<meta itemprop="keywords" content="翻译," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RabbitMQ教程   RPC"/>
+<meta name="twitter:description" content="文章来源于对官方文档的翻译。 远程过程调用（RPC） （使用Java客户端） 在第二个教程中我们学习了如何使用工作队列在多个工作者之间分发耗时任务"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">林伟超</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">所有文章</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">目录</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">林伟超</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">所有文章</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">目录</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">RabbitMQ教程   RPC</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-05-30 </span>
+        <div class="post-category">
+            <a href="/categories/rabbitmq/"> RabbitMQ </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#远程过程调用rpc">远程过程调用（RPC）</a>
+      <ul>
+        <li><a href="#使用java客户端">（使用Java客户端）</a></li>
+      </ul>
+    </li>
+    <li><a href="#客户端接口">客户端接口</a>
+      <ul>
+        <li><a href="#有关rpc的说明">有关RPC的说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#回调队列">回调队列</a>
+      <ul>
+        <li><a href="#消息属性">消息属性</a></li>
+      </ul>
+    </li>
+    <li><a href="#关联id">关联ID</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#将所有放到一起">将所有放到一起</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>文章来源于对<a href="https://www.rabbitmq.com/tutorials/tutorial-six-java.html">官方文档</a>的翻译。</p>
+<h2 id="远程过程调用rpc">远程过程调用（RPC）</h2>
+<h3 id="使用java客户端">（使用Java客户端）</h3>
+<p>在<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97/">第二个教程</a>中我们学习了如何使用<em>工作队列</em>在多个工作者之间分发耗时任务。</p>
+<p>但如果我们需要运行一个在远程计算机上的函数并且等待结果呢？嗯，这是一个不同的故事。这个模式通常认为是<em>远程过程调用</em>或<em>RPC</em>。</p>
+<p>在本教程中我们将要使用RabbitMQ构建一个RPC系统：一个客户端和一个可扩展的服务器。由于没有任何耗时的任务值得发布，我们将要创建一个虚拟的RPC服务来返回斐波纳契数列。</p>
+<h2 id="客户端接口">客户端接口</h2>
+<p>为了描述RPC服务可以被如何使用，我们会创建一个简单的客户端类。它会暴露一个叫做<code>call</code>的方法，发送RPC请求然后阻塞直到接收恢复：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">FibonacciRpcClient</span> <span class="n">fibonacciRpc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FibonacciRpcClient</span><span class="o">();</span>
+<span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">fibonacciRpc</span><span class="o">.</span><span class="na">call</span><span class="o">(</span><span class="s">&#34;4&#34;</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="s">&#34;fib(4) is &#34;</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="有关rpc的说明">有关RPC的说明</h3>
+<p>尽管RPC一个在计算中非常常见的模式，但它经常受到批评。当程序员没有意识到一个函数调用是本地还是一个缓慢的RPC时，问题就出现了。像那样的困惑导致不可预测的系统和增加了调试时不必要的复杂性。误用RPC非但不能简化软件，反而会导致难以维护的复杂代码。</p>
+<p>记住这一点，考虑下面的建议：</p>
+<ul>
+<li>确保一个函数调用是本地还是远程的很明显。</li>
+<li>为系统写文档。使组件之间的依赖清晰。</li>
+<li>处理错误情况。当RPC服务长时间关闭时，客户端如何做？</li>
+</ul>
+<p>当有疑问时避免RPC。如果可以，应该使用异步管道 - 而不是RPC似的阻塞，结果异步推送到下一个计算阶段。</p>
+<h2 id="回调队列">回调队列</h2>
+<p>通常在RabbitMQ之上做RPC是容易的。客户端发送请求消息，然后服务器回复一个响应消息。为了收到响应我们需要随着请求发送一个'回调'队列地址。我们可以使用默认队列（在Java客户端中是独占的）。让我们试一下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">callbackQueueName</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">().</span><span class="na">getQueue</span><span class="o">();</span>
+
+<span class="n">BasicProperties</span> <span class="n">props</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BasicProperties</span>
+                            <span class="o">.</span><span class="na">Builder</span><span class="o">()</span>
+                            <span class="o">.</span><span class="na">replyTo</span><span class="o">(</span><span class="n">callbackQueueName</span><span class="o">)</span>
+                            <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&#34;&#34;</span><span class="o">,</span> <span class="s">&#34;rpc_queue&#34;</span><span class="o">,</span> <span class="n">props</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+
+<span class="c1">// ... then code to read a response message from the callback_queue ...
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="消息属性">消息属性</h3>
+<p>AMQP 0-9-1协议预定义了随着消息的14个属性。大部分属性很少用到，除了下面这些例外：</p>
+<ul>
+<li>
+<p><code>deliveryMode</code>：标记一个消息是持久的（带有值<code>2</code>）或短暂的（任何其他值）。你可能从<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97/">第二个教程</a>中记得这个属性。</p>
+</li>
+<li>
+<p><code>contentType</code>：用来描述编码的MIME类型。例如对常用的JSON编码，设置这个属性的值为<code>application/json</code>是一个很好的实践。</p>
+</li>
+<li>
+<p><code>replyTo</code>：通常用来命名回调队列。</p>
+</li>
+<li>
+<p><code>correlationId</code>：对关联RPC响应到请求有用。</p>
+</li>
+</ul>
+<p>我们需要这个新的导入：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.rabbitmq.client.AMQP.BasicProperties</span><span class="o">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="关联id">关联ID</h2>
+<p>在上面给出的方法中我们建议为每个RPC请求建立一个回调队列。这是非常没效率的，但幸运的是有更好的方法 - 为每个客户端创建单独的回调。</p>
+<p>这产生了一个新的问题，接收到那个队列中的响应，不清楚这个响应属于哪个请求。这就是使用<code>correlationId</code>属性的时机。我们会为每个请求设置它为一个唯一的值。之后，当我们收到回调队列中的一个消息时，我们会查看这个属性，基于这个我们能够匹配响应到请求。如果我们看到一个未知的<code>correlationId</code>值，我们可以安全地丢弃这个消息 - 它不属于我们的请求。</p>
+<p>你可能会问，为什么我们应该忽略回调队列中未知的消息，而不是以一个错误失败呢？这是由于服务器中竞争条件的可能性。尽管不太可能，RPC服务可能在发送给我们回复时死亡，但是在为请求发送确认消息之前。如果这发生了，重启的RPC服务会再次处理该请求。这就是为什么我们必须在客户端中优雅地处理重复响应，而且RPC理想上应该是幂等的。</p>
+<h2 id="总结">总结</h2>
+<p><img src="/RabbitMQ/tutorial-six/python-six.webp" alt="sixt"></p>
+<p>我们的RPC会像这样工作：</p>
+<ul>
+<li>
+<p>对于一个RPC请求，客户端带有两个属性来发送消息：<code>replyTo</code>，设置为一个只为这个请求创建的匿名独占队列，<code>correlationId</code>，对每个请求设置一个唯一值。</p>
+</li>
+<li>
+<p>请求发送到一个<code>rpc_queue</code>队列。</p>
+</li>
+<li>
+<p>RPC工作者（即服务器）等待那个队列中的请求。当一个请求出现时，它会完成工作然后发送带有结果的消息给客户端，使用<code>replyTo</code>字段指定的队列。</p>
+</li>
+<li>
+<p>客户端等待回复队列中的数据。当消息出现时，检查<code>correlationId</code>属性。如果匹配请求的值就返回响应给程序。</p>
+</li>
+</ul>
+<h2 id="将所有放到一起">将所有放到一起</h2>
+<p>斐波那契任务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">fib</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">==</span> <span class="n">1</span><span class="o">)</span> <span class="k">return</span> <span class="n">1</span><span class="o">;</span>
+    <span class="k">return</span> <span class="n">fib</span><span class="o">(</span><span class="n">n</span><span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="o">+</span> <span class="n">fib</span><span class="o">(</span><span class="n">n</span><span class="o">-</span><span class="n">2</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们定义了斐波那契函数。它假设只有合法的正整数输入（不要希望这对大数字可以工作，它可能是最慢的递归实现）。</p>
+<p>RPC服务器的代码可以在这里找到：<a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/RPCServer.java">RPCServer.java</a>。</p>
+<p>服务端代码相当直观：</p>
+<ul>
+<li>
+<p>像往常一样我们从建立连接、通道和声明队列开始。</p>
+</li>
+<li>
+<p>我们可能想运行多于一个服务器进程。为了在多个服务器之间相等地传播负载，我们需要在<code>channel.basicQos</code>设置<code>prefetchCount</code>。</p>
+</li>
+<li>
+<p>我们使用<code>basicConsume</code>来访问队列，以对象的形式提供回调（<code>DeliverCallback</code>），会完成工作然后发送响应回去。</p>
+</li>
+</ul>
+<p>RPC客户端的代码可以在这里找到：<a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/RPCClient.java">RPCClient.java</a>。</p>
+<p>客户端代码稍微复杂一些：</p>
+<ul>
+<li>
+<p>建立连接和通道</p>
+</li>
+<li>
+<p><code>call</code>方法发出实际的RPC请求</p>
+</li>
+<li>
+<p>这里，我们首先生成了一个唯一的<code>correlationId</code>数字并保存 - 消费者回调会使用这个值匹配合适的响应。</p>
+</li>
+<li>
+<p>然后，我们为回复创建一个专门独占的队列并订阅它。</p>
+</li>
+<li>
+<p>接下来，发布请求消息，带有两个属性：<code>replyTo</code>和<code>correlationId</code>。</p>
+</li>
+<li>
+<p>这时我们可以休息一会，等待直到合适的响应到来。</p>
+</li>
+<li>
+<p>由于我们的消费者分发处理在一个分开的线程中出现，我们需要某些能在响应到来之前挂起<code>main</code>线程的东西。<code>BlockingQueue</code>的使用是一个可行的方案。这里我们创建容量为1的<code>ArrayBlockingQueue</code>，由于我们只需要等待一个响应。</p>
+</li>
+<li>
+<p>消费者做了非常简单的工作，对每个消费的响应消息，它检查<code>correlationId</code>是否是我们期待的。如果是，它把响应放到<code>BlockingQueue</code>。</p>
+</li>
+<li>
+<p>同时<code>main</code>线程等待从<code>BlockingQueue</code>中取出响应。</p>
+</li>
+<li>
+<p>最后我们返回响应给用户。</p>
+</li>
+</ul>
+<p>发送客户端请求：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">RPCClient</span> <span class="n">fibonacciRpc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RPCClient</span><span class="o">();</span>
+
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [x] Requesting fib(30)&#34;</span><span class="o">);</span>
+<span class="n">String</span> <span class="n">response</span> <span class="o">=</span> <span class="n">fibonacciRpc</span><span class="o">.</span><span class="na">call</span><span class="o">(</span><span class="s">&#34;30&#34;</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34; [.] Got &#39;&#34;</span> <span class="o">+</span> <span class="n">response</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+
+<span class="n">fibonacciRpc</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>现在是看一下我们完整例子源码的好时机（包含基本异常处理），<a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/RPCClient.java"> RPCClient.java</a>和<a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/RPCServer.java">RPCServer.java</a>。</p>
+<p>像往常一样编译和设置类路径（查看<a href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-hello-world/">教程1</a>）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">javac -cp <span class="nv">$CP</span> RPCClient.java RPCServer.java
+</code></pre></td></tr></table>
+</div>
+</div><p>我们的RPC服务现在准备好了。我们可以启动服务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> RPCServer
+<span class="c1"># =&gt; [x] Awaiting RPC requests</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>为了请求斐波那契数列运行客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">java -cp <span class="nv">$CP</span> RPCClient
+<span class="c1"># =&gt; [x] Requesting fib(30)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里呈现的设计不是唯一可能的RPC服务实现，但是有一些重要的优点：</p>
+<ul>
+<li>
+<p>如果RPC服务太慢，可以通过运行另外一个来扩展。试着在新控制台运行第二个<code>RPCServer</code>。</p>
+</li>
+<li>
+<p>在客户端，RPC只需要发送和接收一个消息。不需要如<code>queueDeclare</code>的同步调用。结果是RPC客户端对一个RPC请求只需要一个网络往返。</p>
+</li>
+</ul>
+<p>我们的代码仍然非常简单化，没有尝试解决更复杂（但是重要）的问题，如：</p>
+<ul>
+<li>
+<p>没有服务器运行时客户端如何做？</p>
+</li>
+<li>
+<p>客户端应该对RPC有某种超时吗？</p>
+</li>
+<li>
+<p>如果服务器故障产生异常，应该转发到客户端吗？</p>
+</li>
+<li>
+<p>在处理之前保护非法到来的消息（如检查边界，类型）。</p>
+</li>
+</ul>
+<p>如果你想试验，你可能会发现<a href="https://www.rabbitmq.com/management.html">management UI</a>对查看队列有用。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">linweichao</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-05-30
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83%E8%80%85%E7%A1%AE%E8%AE%A4/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">RabbitMQ教程 - 发布者确认</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-topics/">
+            <span class="next-text nav-default">RabbitMQ教程 - Topics</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="http://example.org/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">linweichao</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

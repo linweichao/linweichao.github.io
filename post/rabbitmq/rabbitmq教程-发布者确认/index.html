@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>RabbitMQ教程 - 发布者确认 - 林伟超</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="linweichao" /><meta name="description" content="文章来源于对官方文档的翻译。 发布者确认(Publisher Confirms) 发布者确认是RabbitMQ的扩展实现了可靠发布。当在通道（channel）上启" /><meta name="keywords" content="个人, 技术, 博客" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.0 with theme even" />
+
+
+<link rel="canonical" href="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83%E8%80%85%E7%A1%AE%E8%AE%A4/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="RabbitMQ教程 - 发布者确认" />
+<meta property="og:description" content="文章来源于对官方文档的翻译。 发布者确认(Publisher Confirms) 发布者确认是RabbitMQ的扩展实现了可靠发布。当在通道（channel）上启" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-%E5%8F%91%E5%B8%83%E8%80%85%E7%A1%AE%E8%AE%A4/" />
+<meta property="article:published_time" content="2020-05-31T10:03:47+08:00" />
+<meta property="article:modified_time" content="2020-05-31T10:03:47+08:00" />
+<meta itemprop="name" content="RabbitMQ教程 - 发布者确认">
+<meta itemprop="description" content="文章来源于对官方文档的翻译。 发布者确认(Publisher Confirms) 发布者确认是RabbitMQ的扩展实现了可靠发布。当在通道（channel）上启">
+<meta itemprop="datePublished" content="2020-05-31T10:03:47&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-31T10:03:47&#43;08:00" />
+<meta itemprop="wordCount" content="3075">
+
+
+
+<meta itemprop="keywords" content="翻译," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RabbitMQ教程 - 发布者确认"/>
+<meta name="twitter:description" content="文章来源于对官方文档的翻译。 发布者确认(Publisher Confirms) 发布者确认是RabbitMQ的扩展实现了可靠发布。当在通道（channel）上启"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">林伟超</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">所有文章</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">目录</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">林伟超</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">所有文章</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">目录</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">RabbitMQ教程 - 发布者确认</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-05-31 </span>
+        <div class="post-category">
+            <a href="/categories/rabbitmq/"> RabbitMQ </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#发布者确认publisher-confirms">发布者确认(Publisher Confirms)</a>
+      <ul>
+        <li><a href="#使用java客户端">（使用Java客户端）</a></li>
+      </ul>
+    </li>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#在通道上启动发布者确认">在通道上启动发布者确认</a></li>
+    <li><a href="#策略1单独发送消息">策略#1：单独发送消息</a>
+      <ul>
+        <li><a href="#发布者确认是异步的吗">发布者确认是异步的吗？</a></li>
+      </ul>
+    </li>
+    <li><a href="#策略2批量发送消息">策略#2：批量发送消息</a></li>
+    <li><a href="#策略3异步处理发布者确认">策略#3：异步处理发布者确认</a>
+      <ul>
+        <li><a href="#如何追踪为解决的outstanding的确认">如何追踪为解决的（outstanding）的确认？</a></li>
+        <li><a href="#重新发布否定确认的消息">重新发布否定确认的消息？</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#将所有放到一起">将所有放到一起</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>文章来源于对<a href="https://www.rabbitmq.com/tutorials/tutorial-seven-java.html">官方文档</a>的翻译。</p>
+<h2 id="发布者确认publisher-confirms">发布者确认(Publisher Confirms)</h2>
+<p><a href="https://www.rabbitmq.com/confirms.html#publisher-confirms">发布者确认</a>是RabbitMQ的扩展实现了可靠发布。当在通道（channel）上启动发布者确认时，客户端发布的消息由代理异步确认，意味着它们在服务器端处理过了。</p>
+<h3 id="使用java客户端">（使用Java客户端）</h3>
+<h2 id="概述">概述</h2>
+<p>在这个教程中我们会使用发布者确认确保发布的消息安全地到达代理。我们会介绍使用发布者确认的若干策略并解释它们的优缺点。</p>
+<h2 id="在通道上启动发布者确认">在通道上启动发布者确认</h2>
+<p>发布者确认是RabbitMQ对AMQP 0.9.1协议的拓展，因此默认不是打开的。发布者订阅在通道级别使用<code>confirmSelect</code>打开：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">confirmSelect</span><span class="o">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个方法必须在每个你期望使用发布者订阅的通道上打开。确认应该只打开一次，不是对个发布的消息都打开。</p>
+<h2 id="策略1单独发送消息">策略#1：单独发送消息</h2>
+<p>让我们以带确认发布的最简单的方法开始，即，发布一个消息然后同步等待它的确认：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="k">while</span> <span class="o">(</span><span class="n">thereAreMessagesToPublish</span><span class="o">())</span> <span class="o">{</span>
+    <span class="kt">byte</span><span class="o">[]</span> <span class="n">body</span> <span class="o">=</span> <span class="o">...;</span>
+    <span class="n">BasicProperties</span> <span class="n">properties</span> <span class="o">=</span> <span class="o">...;</span>
+    <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">exchange</span><span class="o">,</span> <span class="n">queue</span><span class="o">,</span> <span class="n">properties</span><span class="o">,</span> <span class="n">body</span><span class="o">);</span>
+    <span class="c1">// uses a 5 second timeout
+</span><span class="c1"></span>    <span class="n">channel</span><span class="o">.</span><span class="na">waitForConfirmsOrDie</span><span class="o">(</span><span class="n">5_000</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的例子中像往常一样发布了一个消息然后用<code>Channel#waitForConfirmsOrDie(long)</code>等待确认。消息一被确认这个方法就返回。如果消息没有在超时时间内确认或是否定确认（意思是代理因为某些原因不能处理它），这个方法会抛出异常。异常的处理通常包括记录错误消息和（或）重试发送消息。</p>
+<p>不同客户端库有不同方式来同步处理发布者确认，因此仔细阅读你使用的客户端的文档。</p>
+<p>这个技术很直观但是也有一个主要的缺点：它显著地降低了发布的速度，由于消息的确认阻塞了接下来所有消息的发布。这种方法提供的吞吐量不会超过每秒数百条已发布消息。然而，对某些程序来说这已经足够了。</p>
+<h3 id="发布者确认是异步的吗">发布者确认是异步的吗？</h3>
+<p>我们在开头提到代理异步确认以发布的消息，但是在第一个例子代码同步等待直到消息被确认。客户端实际上异步接收确认，然后相应地取消<code>waitForConfirmsOrDie</code>调用的阻塞。把<code>waitForConfirmsOrDie</code>想成是一个同步的helper，依赖底层的异步通知。</p>
+<h2 id="策略2批量发送消息">策略#2：批量发送消息</h2>
+<p>为了改进我们前面的例子，我们可以发送一批消息然后等待这个批次被确认。下面的例子使用一批为100：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span> <span class="n">batchSize</span> <span class="o">=</span> <span class="n">100</span><span class="o">;</span>
+<span class="kt">int</span> <span class="n">outstandingMessageCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+<span class="k">while</span> <span class="o">(</span><span class="n">thereAreMessagesToPublish</span><span class="o">())</span> <span class="o">{</span>
+    <span class="kt">byte</span><span class="o">[]</span> <span class="n">body</span> <span class="o">=</span> <span class="o">...;</span>
+    <span class="n">BasicProperties</span> <span class="n">properties</span> <span class="o">=</span> <span class="o">...;</span>
+    <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">exchange</span><span class="o">,</span> <span class="n">queue</span><span class="o">,</span> <span class="n">properties</span><span class="o">,</span> <span class="n">body</span><span class="o">);</span>
+    <span class="n">outstandingMessageCount</span><span class="o">++;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">outstandingMessageCount</span> <span class="o">==</span> <span class="n">batchSize</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ch</span><span class="o">.</span><span class="na">waitForConfirmsOrDie</span><span class="o">(</span><span class="n">5_000</span><span class="o">);</span>
+        <span class="n">outstandingMessageCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">outstandingMessageCount</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ch</span><span class="o">.</span><span class="na">waitForConfirmsOrDie</span><span class="o">(</span><span class="n">5_000</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>等待一批消息确认大幅提高了吞吐量，与等待单独的消息被确认相比（对一个远程RabbitMQ节点来说多达20-30倍）。一个缺点是在失败的情况我们不能精确知道什么出错了，因此我们必须保留整个批次在内存中，记录一些有意义的事或重新发布消息。这个解决方案还是同步的，因此阻塞了消息的发布。</p>
+<h2 id="策略3异步处理发布者确认">策略#3：异步处理发布者确认</h2>
+<p>代理异步确认发布过的消息，只需要在客户端注册一个回调，在确认时被通知：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">confirmSelect</span><span class="o">();</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">addConfirmListener</span><span class="o">((</span><span class="n">sequenceNumber</span><span class="o">,</span> <span class="n">multiple</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="c1">// code when message is confirmed
+</span><span class="c1"></span><span class="o">},</span> <span class="o">(</span><span class="n">sequenceNumber</span><span class="o">,</span> <span class="n">multiple</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="c1">// code when message is nack-ed
+</span><span class="c1"></span><span class="o">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>有两个回调：一个是对已确认的消息，一个是对否定确认的消息（可以认为是代理丢失的消息）。每个回调都有两个参数：</p>
+<ul>
+<li>
+<p>sequence number：一个标识确认或否定确认的数字。我们马上会看到如何关联它到已发布的消息。</p>
+</li>
+<li>
+<p>multiple：布尔值。如果是false，只有一个消息确认/否定确认，如果是true，序号小于或等于第一个参数的所有消息都是确认/否定确认。</p>
+</li>
+</ul>
+<p>序号可以在发布之前用<code>Channel#getNextPublishSeqNo()</code>获取：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span> <span class="n">sequenceNumber</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">getNextPublishSeqNo</span><span class="o">());</span>
+<span class="n">ch</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">exchange</span><span class="o">,</span> <span class="n">queue</span><span class="o">,</span> <span class="n">properties</span><span class="o">,</span> <span class="n">body</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>一个简单的关联消息和序号的方法在于使用map。让我们假设我们想发布字符串，因为它们很容易转为字节数组发布。这是使用map关联发布序号和消息字符串body的代码例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">ConcurrentNavigableMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">outstandingConfirms</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentSkipListMap</span><span class="o">&lt;&gt;();</span>
+<span class="c1">// ... code for confirm callbacks will come later
+</span><span class="c1"></span><span class="n">String</span> <span class="n">body</span> <span class="o">=</span> <span class="s">&#34;...&#34;</span><span class="o">;</span>
+<span class="n">outstandingConfirms</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">channel</span><span class="o">.</span><span class="na">getNextPublishSeqNo</span><span class="o">(),</span> <span class="n">body</span><span class="o">);</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">exchange</span><span class="o">,</span> <span class="n">queue</span><span class="o">,</span> <span class="n">properties</span><span class="o">,</span> <span class="n">body</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>发布代码现在使用map追踪发出的消息。当确认到达时我们需要清除map，做一些如当消息否定确认时记录一个警告：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">ConcurrentNavigableMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">outstandingConfirms</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentSkipListMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">ConfirmCallback</span> <span class="n">cleanOutstandingConfirms</span> <span class="o">=</span> <span class="o">(</span><span class="n">sequenceNumber</span><span class="o">,</span> <span class="n">multiple</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">multiple</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ConcurrentNavigableMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">confirmed</span> <span class="o">=</span> <span class="n">outstandingConfirms</span><span class="o">.</span><span class="na">headMap</span><span class="o">(</span>
+          <span class="n">sequenceNumber</span><span class="o">,</span> <span class="kc">true</span>
+        <span class="o">);</span>
+        <span class="n">confirmed</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">outstandingConfirms</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">sequenceNumber</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">addConfirmListener</span><span class="o">(</span><span class="n">cleanOutstandingConfirms</span><span class="o">,</span> <span class="o">(</span><span class="n">sequenceNumber</span><span class="o">,</span> <span class="n">multiple</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">body</span> <span class="o">=</span> <span class="n">outstandingConfirms</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">sequenceNumber</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">err</span><span class="o">.</span><span class="na">format</span><span class="o">(</span>
+      <span class="s">&#34;Message with body %s has been nack-ed. Sequence number: %d, multiple: %b%n&#34;</span><span class="o">,</span>
+      <span class="n">body</span><span class="o">,</span> <span class="n">sequenceNumber</span><span class="o">,</span> <span class="n">multiple</span>
+    <span class="o">);</span>
+    <span class="n">cleanOutstandingConfirms</span><span class="o">.</span><span class="na">handle</span><span class="o">(</span><span class="n">sequenceNumber</span><span class="o">,</span> <span class="n">multiple</span><span class="o">);</span>
+<span class="o">});</span>
+<span class="c1">// ... publishing code
+</span></code></pre></td></tr></table>
+</div>
+</div><p>前面的例子包含一个当确认到达时清除map的回调。注意这个回调清除单个和多个确认。回调在确认到达时使用（作为<code>Channel#addConfirmListener</code>的第一个参数）。否定确认消息的回调取回消息体并且发出一个警告。然后重用前一个回调来清除未解决确认（outstanding confirms ）的map（无论消息是确认还是否定确认，它们在map中相应的entry都必须删除）。</p>
+<h3 id="如何追踪为解决的outstanding的确认">如何追踪为解决的（outstanding）的确认？</h3>
+<p>我们的例子使用<code>ConcurrentNavigableMap</code>来追踪为解决的确认。这个数据结构由于几个原因非常方便。它允许简单地关联序号和消息（无论消息数据是什么），容易删除到给定序号的entry（处理多个确认/否定确认）。最后，它支持并发访问，因为确认回调在客户端库持有的线程中调用，应该和发布的线程不同。</p>
+<p>除了复杂map实现，还有其它方式追踪未解决的确认，如使用简单的concurrent hash map和一个追踪发布序号的下界，但它们通常更复杂，不属于教程。</p>
+<p>总之，异步处理发布者确认通常需要下述步骤：</p>
+<ul>
+<li>
+<p>提供一个方式关联发布序号和消息</p>
+</li>
+<li>
+<p>在通道上注册确认监听器，当发布者确认/否定确认到达时执行合适的动作，如记录或重新发布否定确认的消息。序号到消息的关联机制在这个步骤可能也需要些清除操作。</p>
+</li>
+<li>
+<p>在发布消息之前追踪发布序列号</p>
+</li>
+</ul>
+<h3 id="重新发布否定确认的消息">重新发布否定确认的消息？</h3>
+<p>从相应的回调中重新发布否定确认消息可能很吸引人，但是这应该避免，由于确认回调在一个通道（channel）不支持操作的I/O线程中分发。更好的方案在于把消息入到一个内存中的由发布线程轮询的队列。像<code>ConcurrentLinkedQueue</code>的类是一个好的候选者，在确认回调和发布线程之间传递消息。</p>
+<h2 id="总结">总结</h2>
+<p>确保发布的消息发送到代理在某些程序中是关键的。发布者确认是RabbitMQ的特性来帮助实现这个需求。发布者确认本质上是异步的，但是可以同步处理它们。没有实现发布者订阅最佳的方式，这通常归结为应用程序和整个系统中的约束。典型的技术是：</p>
+<ul>
+<li>
+<p>单独发布消息，同步等待确认：简单，但是吞吐量有限。</p>
+</li>
+<li>
+<p>批量发布消息，批量同步等待确认：简单，合理的（reasonable）吞吐量，但是当发生错误时很难找出原因。</p>
+</li>
+<li>
+<p>异步处理：最好的性能和资源利用，错误时良好的控制，正确实现可可能很复杂。</p>
+</li>
+</ul>
+<h2 id="将所有放到一起">将所有放到一起</h2>
+<p><a href="https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/PublisherConfirms.java">PublisherConfirms.java</a>类包含我们介绍技术的代码。可以编译，执行，并且看它们是如何执行的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">javac -cp <span class="nv">$CP</span> PublisherConfirms.java
+java -cp <span class="nv">$CP</span> PublisherConfirms
+</code></pre></td></tr></table>
+</div>
+</div><p>输出像下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Published 50,000 messages individually in 5,549 ms
+Published 50,000 messages in batch in 2,331 ms
+Published 50,000 messages and handled confirms asynchronously in 4,054 ms
+</code></pre></td></tr></table>
+</div>
+</div><p>在你电脑上的输出应该看起来差不多，如果客户端和服务器在相同机器上的话。单独发布消息如预期一样表现很差，但是异步处理的结果对比批量发布让人有点失望。</p>
+<p>发布者确认很依赖网络，因此我们最好用远程节点试一下，这更真实，因为生产中客户端和服务器通常不在相同机器上。<code>PublisherConfirms.java</code>可以简单修改成使用非本地节点：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">static</span> <span class="n">Connection</span> <span class="nf">createConnection</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">ConnectionFactory</span> <span class="n">cf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+    <span class="n">cf</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&#34;remote-host&#34;</span><span class="o">);</span>
+    <span class="n">cf</span><span class="o">.</span><span class="na">setUsername</span><span class="o">(</span><span class="s">&#34;remote-user&#34;</span><span class="o">);</span>
+    <span class="n">cf</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="s">&#34;remote-password&#34;</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">cf</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>重新编译这个类，再次运行，然后等待结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Published 50,000 messages individually in 231,541 ms
+Published 50,000 messages in batch in 7,232 ms
+Published 50,000 messages and handled confirms asynchronously in 6,332 ms
+</code></pre></td></tr></table>
+</div>
+</div><p>我们看到单独发布现在表现很糟，但在客户端和服务器之间网络的存在下，批量发布和异步处理现在表现差不多，异步处理发布者确认有点小优势。</p>
+<p>记住批量发布实现简单，但是在否定发布者确认的情况，没有使知道哪个消息不能被代理处理更容易。异步处理发布者确认实现更复杂，但是当发布的消息被否定确认时提供更好的粒度和控制动作。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">linweichao</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-05-31
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/rabbitmq/rabbitmq%E6%95%99%E7%A8%8B-rpc/">
+            <span class="next-text nav-default">RabbitMQ教程   RPC</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="http://example.org/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">linweichao</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
